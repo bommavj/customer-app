@@ -1,0 +1,23 @@
+---
+resources:
+- name: master-branch
+  type: git
+  icon: git
+  source:
+    uri: https://github.com/bommavj/customer-app.git
+    branch: master
+- name: docker-build
+  type: docker-image
+  source:
+    repository: vernaillen/concourse-docker-gradle-sample
+jobs:
+- name: build-app
+  public: true
+  plan:
+  - get: concourse-docker-gradle-sample
+    trigger: truels
+  - task: gradle-build
+    file: customer-app/ci/build.yml
+  - put: docker-build
+    params:
+      build: customer-app/src/main/docker
